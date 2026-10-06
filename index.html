@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="漢字100点">
+<meta name="theme-color" content="#3f6b4f">
+<title>漢字100点マスター</title>
+<style>
+:root{
+  --paper:#f6f9f3;      /* 漢字ノートの紙 */
+  --grid:#dbe7d3;       /* ノートのマス線 */
+  --ink:#1f2a25;        /* えんぴつ */
+  --sub:#66756c;
+  --note:#3f6b4f;       /* ノートの表紙の緑 */
+  --note-d:#2c4d38;
+  --pen:#e0312b;        /* 赤ペン */
+  --pen-s:#fde9e7;
+  --hl:#ffe46b;         /* 蛍光ペン */
+  --ok:#e0312b; --close:#d98a00; --ng:#2c5aa0;
+  --close-s:#fff4d8; --ng-s:#e8eef9;
+  --card:#ffffff;
+  --kfont:"UD デジタル 教科書体 N-R","UD Digi Kyokasho N-R","UD デジタル 教科書体 NK-R","UD Digi Kyokasho NK-R","YuKyokasho","Klee One","Hiragino Mincho ProN","Yu Mincho",serif;
+  --ufont:"Hiragino Maru Gothic ProN","BIZ UDPGothic","UD デジタル 教科書体 NK-R","Meiryo",system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px;background-attachment:fixed;
+  color:var(--ink);font-family:var(--ufont);font-size:16px;line-height:1.6;
+  -webkit-user-select:none;user-select:none;
+}
+#app{max-width:720px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,.cell:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+
+/* ---------- HOME ---------- */
+.cover{background:var(--note);color:#fff;border-radius:6px 22px 22px 6px;padding:20px 22px 22px 30px;position:relative;box-shadow:0 5px 0 var(--note-d);margin-top:6px}
+.cover::before{content:"";position:absolute;left:10px;top:12px;bottom:12px;border-left:3px dotted rgba(255,255,255,.45)}
+.cover-sub{font-size:13px;opacity:.85}
+.cover h1{white-space:nowrap;font-family:var(--kfont);font-size:clamp(26px,7.6vw,46px);line-height:1.15;margin-top:4px;letter-spacing:.03em}
+.namebox{display:inline-block;margin-top:12px;background:#fff;color:var(--ink);padding:4px 14px;border-radius:4px;font-weight:700;font-size:15px}
+.namebox b{color:var(--pen)}
+.badge{margin-top:12px;background:var(--hl);border-radius:12px;padding:10px 14px;font-weight:800;text-align:center}
+.today{display:block;width:100%;margin:18px 0 12px;padding:18px 110px 18px 20px;border:3px solid var(--pen);border-radius:20px;background:#fff;text-align:left;box-shadow:0 5px 0 var(--pen);position:relative}
+.today:active{transform:translateY(4px);box-shadow:0 1px 0 var(--pen)}
+.today .t1{font-size:24px;font-weight:800;color:var(--pen)}
+.today .t2{font-size:14px;color:var(--sub);margin-top:2px}
+.today .num{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-family:var(--kfont);font-size:54px;line-height:1;color:var(--pen)}
+.today .num small{font-size:20px}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mbtn{display:flex;flex-direction:column;gap:2px;padding:14px;background:#fff;border:2px solid var(--grid);border-radius:16px;box-shadow:0 3px 0 var(--grid);text-align:left}
+.mbtn:active{transform:translateY(2px);box-shadow:none}
+.mbtn b{font-size:17px}
+.mbtn span{font-size:12.5px;color:var(--sub)}
+.mbtn.test{border-color:var(--note);box-shadow:0 3px 0 var(--note)}
+.prog{margin-top:18px;background:#fff;border:2px solid var(--grid);border-radius:16px;padding:16px}
+.prog-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.prog-h span{font-weight:700}
+.prog-h b{font-family:var(--kfont);font-size:30px;color:var(--note)}
+.prog-h b small{font-size:16px;color:var(--sub)}
+.masu50{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:10px}
+.m{aspect-ratio:1;display:grid;place-items:center;font-size:10.5px;border-radius:4px;background:var(--paper);color:#9aa79f;border:1px solid var(--grid)}
+.m.s1{background:#fbe3dc;color:#b04a33;border-color:#f3c7bb}
+.m.s2{background:#fff0bd;color:#8a6500;border-color:#f1dc8e}
+.m.s3{background:#d6ecd9;color:#2c6a3d;border-color:#b4d9bb}
+.m.s4{background:var(--note);color:#fff;border-color:var(--note)}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;font-size:13.5px}
+.legend b{float:right}
+
+/* ---------- COMMON ---------- */
+.shead{display:flex;align-items:center;gap:10px}
+.x{flex:none;width:42px;height:42px;border-radius:50%;border:2px solid var(--grid);background:#fff;font-size:17px;font-weight:700}
+.bar{flex:1;height:10px;background:#e7eee3;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--note);border-radius:99px;transition:width .4s}
+.tag{flex:none;font-size:12px;font-weight:800;background:var(--ink);color:#fff;padding:4px 10px;border-radius:99px}
+.combo{text-align:center;color:var(--pen);font-weight:800;margin-top:6px;font-size:15px}
+.tabs{display:flex;gap:6px;margin-top:10px}
+.tab{flex:1;padding:9px 2px;border-radius:12px;border:2px solid var(--grid);background:#fff;font-weight:800;font-size:13.5px}
+.tab.on{background:var(--note);border-color:var(--note);color:#fff}
+.qnav{display:flex;align-items:center;gap:8px;margin-top:8px}
+.qnav .no{flex:1;text-align:center;font-weight:800}
+.small-btn{padding:8px 14px;border-radius:12px;border:2px solid var(--grid);background:#fff;font-weight:700;font-size:14px}
+.prompt{background:#fff;border:2px solid var(--grid);border-radius:16px;padding:14px 16px;margin-top:12px}
+.lab{font-size:13px;color:var(--sub);font-weight:700}
+.sent{font-family:var(--kfont);font-size:clamp(23px,6.4vw,32px);line-height:2;margin-top:2px}
+.sent.small{font-size:20px}
+.yomi{white-space:nowrap;color:var(--pen);font-weight:700;background:linear-gradient(transparent 62%,var(--hl) 62%);padding:0 .08em}
+ruby.ans{color:var(--pen);font-weight:700}
+rt{font-size:.42em;color:var(--sub);font-weight:400}
+.note2{font-size:13px;color:var(--sub);margin-top:2px}
+.btn{display:block;width:100%;margin-top:12px;padding:15px;font-size:18px;font-weight:800;border-radius:16px;border:2px solid var(--grid);background:#fff;box-shadow:0 4px 0 var(--grid)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--grid)}
+.btn.primary{background:var(--note);border-color:var(--note);color:#fff;box-shadow:0 4px 0 var(--note-d)}
+.btn.red{background:var(--pen);border-color:var(--pen);color:#fff;box-shadow:0 4px 0 #a8201b}
+.btn:disabled{opacity:.4}
+.tools{display:flex;gap:8px;margin-top:10px}
+.tbtn{flex:1;padding:11px 4px;border-radius:12px;border:2px solid var(--grid);background:#fff;font-weight:700;font-size:14.5px}
+.tbtn.hint{border-color:#ecd67a;background:#fffbe6}
+.tbtn:disabled{opacity:.4}
+.hint{margin-top:8px;background:#fffbe6;border:2px dashed #ecd67a;border-radius:12px;padding:8px 12px;font-size:15px}
+.hint .hans{font-family:var(--kfont);font-size:30px;color:var(--pen)}
+.link{display:block;margin:12px auto 0;background:none;border:0;color:var(--sub);text-decoration:underline;font-size:14px}
+
+/* ---------- WRITING MASU ---------- */
+.wwrap{position:relative;margin-top:14px}
+.writer{display:flex;justify-content:center}
+.writer.off{pointer-events:none;opacity:.85}
+.cell{position:relative;background:#fff;border:3px solid #9fb8a4;border-radius:4px;touch-action:none;flex:none}
+.cell::before,.cell::after{content:"";position:absolute;pointer-events:none;z-index:0}
+.cell::before{left:50%;top:0;bottom:0;border-left:2px dashed #cfdccb}
+.cell::after{top:50%;left:0;right:0;border-top:2px dashed #cfdccb}
+.cell canvas{position:absolute;inset:0;touch-action:none}
+.cell .gcv{z-index:1;pointer-events:none}
+.cell .kcv{z-index:2}
+.cell.c-ok{border-color:var(--pen)}
+.cell.c-close{border-color:var(--close)}
+.cell.c-ng{border-color:var(--ng)}
+.flash{position:absolute;inset:-6px;display:none;place-items:center;font-family:var(--kfont);font-size:min(26vw,120px);color:var(--pen);background:rgba(255,255,255,.94);z-index:5;border-radius:10px;pointer-events:none;letter-spacing:.1em}
+.flash.on{display:grid}
+
+/* ---------- RESULT (赤ペン) ---------- */
+.result{margin-top:14px;border-radius:18px;padding:16px;text-align:center;background:#fff;border:2px solid var(--grid);animation:pop .3s ease-out}
+.rmark{width:84px;height:84px;margin:0 auto}
+.rmark svg{width:100%;height:100%}
+.rmark .draw{stroke-dasharray:400;stroke-dashoffset:400;animation:draw .55s ease-out forwards}
+.rtitle{font-size:24px;font-weight:800;margin-top:4px}
+.r-ok .rtitle{color:var(--pen)}
+.r-close .rtitle{color:var(--close)}
+.r-wrong .rtitle{color:var(--ng)}
+.rmsg{margin-top:2px}
+.rcom{margin-top:8px;background:var(--paper);border-radius:10px;padding:8px 10px;font-size:15px;text-align:left}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.compare figure{margin:0;background:#fff;border-radius:12px;border:2px solid var(--grid);padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:110px}
+.compare img{max-width:100%;max-height:110px}
+.ansbig{font-family:var(--kfont);font-size:clamp(34px,10vw,58px);line-height:1.2;color:var(--ink)}
+figcaption{font-size:12px;color:var(--sub);margin-top:4px}
+.rbtns{display:grid;gap:0}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* ---------- LEARN ---------- */
+.bigans{font-family:var(--kfont);font-size:clamp(56px,17vw,96px);line-height:1.15;text-align:center;letter-spacing:.06em}
+.bigans .kana{color:var(--ng)}
+.ydisp{text-align:center;font-size:18px}
+.ydisp b{color:var(--pen)}
+.mean{margin-top:8px;background:var(--paper);border-radius:10px;padding:10px 12px}
+.kcard{display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:start;margin-top:12px;background:#fff;border:2px solid var(--grid);border-radius:16px;padding:12px}
+.sp-box svg{display:block;width:100%;aspect-ratio:1;background:#fff;border:2px solid #9fb8a4;border-radius:4px}
+.sp-bg path{fill:none;stroke:#e3e9df;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.sp-fg path{fill:none;stroke:var(--ink);stroke-width:3.6;stroke-linecap:round;stroke-linejoin:round}
+.sp-fg path.cur{stroke:var(--pen)}
+.sp-fallback{display:grid;place-items:center;aspect-ratio:1;font-family:var(--kfont);font-size:92px;border:2px solid #9fb8a4;border-radius:4px;background:#fff}
+.sp-ctrl{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center}
+.sp-ctrl button{padding:5px 10px;border-radius:99px;border:2px solid var(--grid);background:#fff;font-size:13px;font-weight:700}
+.sp-ctrl .sp-n{font-size:13px;color:var(--sub)}
+.sp-ctrl small{font-size:11.5px;color:var(--sub);line-height:1.4}
+.kch{font-family:var(--kfont);font-size:52px;line-height:1}
+.kmeta{font-size:14.5px;margin-top:4px}
+.uses{margin-top:8px;font-size:13.5px}
+.uses .u{display:inline-block;margin:3px 4px 0 0;padding:2px 8px;border-radius:8px;background:var(--paper);border:1px solid var(--grid);font-family:var(--kfont);font-size:17px}
+.uses .u.me{background:var(--hl);border-color:#e9cf4a}
+.warn{display:inline-block;margin-top:6px;font-size:13px;font-weight:800;color:#8a6500;background:var(--close-s);padding:2px 8px;border-radius:8px}
+
+/* ---------- LIST ---------- */
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
+.qt{text-align:left;padding:10px 12px;border-radius:12px;border:2px solid var(--grid);background:#fff}
+.qt .n{font-size:12px;color:var(--sub);display:flex;justify-content:space-between}
+.qt .r{font-family:var(--kfont);font-size:19px;font-weight:700;color:var(--pen)}
+h2.pg{font-family:var(--kfont);font-size:26px;margin-top:10px}
+
+/* ---------- TEST ---------- */
+.thead{display:flex;align-items:center;gap:10px}
+.tno{font-family:var(--kfont);font-size:24px;font-weight:700}
+.tnav{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.tnav .btn{margin-top:12px}
+.qdots{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:16px}
+.qd{aspect-ratio:1;border-radius:4px;border:1px solid var(--grid);font-size:10px;background:#fff;padding:0;color:var(--sub)}
+.qd.w{background:var(--ink);color:#fff;border-color:var(--ink)}
+.qd.cur{outline:3px solid var(--pen);outline-offset:-1px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--grid);border-radius:14px;padding:12px 14px;margin-top:12px}
+.switch input{width:52px;height:30px;appearance:none;-webkit-appearance:none;background:#cfd8cf;border-radius:99px;position:relative;cursor:pointer;flex:none;transition:background .2s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.switch input:checked{background:var(--note)}
+.switch input:checked::after{left:25px}
+.switch small{display:block;color:var(--sub);font-size:12.5px}
+
+/* ---------- SCORE ---------- */
+.sheet{background:#fff;border:2px solid var(--grid);border-radius:16px;padding:18px;margin-top:12px;text-align:center}
+.score{display:inline-block;font-family:var(--kfont);font-size:92px;line-height:1;color:var(--pen);border-bottom:5px double var(--pen);padding:0 8px;transform:rotate(-3deg)}
+.score small{font-size:26px}
+.counts{display:flex;justify-content:center;gap:18px;margin-top:14px;font-weight:700}
+.counts .c-ok{color:var(--pen)}.counts .c-close{color:var(--close)}.counts .c-ng{color:var(--ng)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;justify-content:center}
+.chip{padding:6px 12px;border-radius:10px;background:#fff;border:2px solid var(--grid);font-family:var(--kfont);font-size:20px}
+.chip b{font-family:var(--ufont);font-size:12px;color:var(--sub);margin-right:6px}
+.chip.ng{border-color:#b7c8e6;background:var(--ng-s)}
+.chip.close{border-color:#f0d590;background:var(--close-s)}
+.remain{font-size:20px;font-weight:800;margin-top:12px}
+.secttl{font-weight:800;margin-top:18px;font-size:16px}
+.row{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--grid);text-align:left}
+.row .no{font-weight:800;color:var(--sub)}
+.row .imgs{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.row img{height:64px;background:#fff;border:1px solid var(--grid);border-radius:6px}
+.row .a{font-family:var(--kfont);font-size:30px}
+.jcs{display:flex;gap:6px;margin-top:6px}
+.jc{flex:1;padding:7px 0;border-radius:10px;border:2px solid var(--grid);background:#fff;font-weight:800}
+.jc.on.ok{background:var(--pen);border-color:var(--pen);color:#fff}
+.jc.on.close{background:var(--close);border-color:var(--close);color:#fff}
+.jc.on.wrong{background:var(--ng);border-color:var(--ng);color:#fff}
+
+/* ---------- RECORDS ---------- */
+.panel{background:#fff;border:2px solid var(--grid);border-radius:16px;padding:14px 16px;margin-top:12px}
+.panel h3{font-size:17px;margin-bottom:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.stats div{background:var(--paper);border-radius:10px;padding:8px 2px}
+.stats b{display:block;font-family:var(--kfont);font-size:28px;line-height:1.1}
+.stats span{font-size:12px}
+.kv{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--grid)}
+.tests .t{display:grid;grid-template-columns:86px 1fr 52px;gap:8px;align-items:center;font-size:13.5px;margin-top:6px}
+.tests .tb{height:12px;background:#eef3eb;border-radius:99px;overflow:hidden}
+.tests .tb i{display:block;height:100%;background:var(--pen)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;color:var(--sub);font-weight:700;border-bottom:2px solid var(--grid);padding:4px}
+.tbl td{padding:6px 4px;border-bottom:1px solid var(--grid)}
+.tbl .k{font-family:var(--kfont);font-size:18px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:6px}
+.kg{border-radius:10px;padding:6px 2px;text-align:center;background:var(--paper);border:2px solid transparent}
+.kg .c{font-family:var(--kfont);font-size:28px;line-height:1.2}
+.kg .u{font-size:10px;color:var(--sub)}
+.kg.hi{background:#d6ecd9}.kg.mid{background:#fff0bd}.kg.lo{background:#fbe3dc}
+.kg.mix{border-color:var(--close);border-style:dashed}
+textarea{width:100%;min-height:180px;font-family:ui-monospace,monospace;font-size:12px;border:2px solid var(--grid);border-radius:10px;padding:8px;-webkit-user-select:text;user-select:text}
+
+/* ---------- OVERLAYS ---------- */
+.modal{position:fixed;inset:0;background:rgba(25,35,30,.5);display:grid;place-items:center;z-index:50;padding:16px}
+.mbox{background:#fff;border-radius:18px;padding:18px;max-width:520px;width:100%;max-height:90vh;overflow:auto}
+.mbox h3{font-size:19px}
+.msub{font-size:14px;color:var(--sub);margin-top:4px}
+.mbtns{display:grid;gap:0}
+.mbtns .btn.ok{background:var(--pen);border-color:var(--pen);color:#fff;box-shadow:0 4px 0 #a8201b}
+.mbtns .btn.close{background:var(--close-s);border-color:var(--close)}
+.mbtns .btn.ng{background:var(--ng-s);border-color:var(--ng)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;z-index:60;font-weight:700;font-size:15px;max-width:90vw;text-align:center}
+.judging{position:fixed;inset:0;display:grid;place-items:center;background:rgba(246,249,243,.88);z-index:40;font-weight:800;font-size:18px;text-align:center}
+.spin{width:54px;height:54px;margin:0 auto 10px;border-radius:50%;border:5px solid var(--grid);border-top-color:var(--pen);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+body.honban *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rmark .draw{stroke-dashoffset:0}}
+@media (max-width:380px){.kcard{grid-template-columns:110px 1fr}.menu{gap:8px}.mbtn b{font-size:15.5px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!--
+  ===== 問題データ =====
+  テストが変わったら、ここ（または 学習記録 → 問題データ）を差し替えるだけでOK。
+  sentence の { } の中が「読み（出題部分）」です。{ } の外の送りがなは問題文の一部として表示されます。
+  answer には、子どもがマスに書く文字（送りがなをふくむ）を入れます。
+-->
+<script type="application/json" id="question-data">
+{
+  "setId": "g5-kanji50-v1",
+  "title": "5年 漢字テスト（50問）",
+  "questions": [
+    {"id":1,"answer":"得","reading":"とく","sentence":"早起きは三文の{とく}。","meaning":"もうけ。ためになること。","difficulty":2},
+    {"id":2,"answer":"張","reading":"は","sentence":"テントを{は}る。","meaning":"ぴんと広げてとめる。","difficulty":2},
+    {"id":3,"answer":"在","reading":"ざい","sentence":"{ざい}校生が集まる。","meaning":"その場所にいる・あること。","difficulty":2},
+    {"id":4,"answer":"検","reading":"けん","sentence":"体の{けん}査を受ける。","meaning":"よく調べること。","difficulty":2},
+    {"id":5,"answer":"寄","reading":"よ","sentence":"帰りに本屋に{よ}る。","meaning":"とちゅうで立ち止まって行く。","difficulty":2},
+    {"id":6,"answer":"仏","reading":"ほとけ","sentence":"{ほとけ}の顔も三度まで。","meaning":"仏さま。","difficulty":1},
+    {"id":7,"answer":"貸","reading":"か","sentence":"友だちにかさを{か}す。","meaning":"自分の物を使わせてあげる。反対は「借りる」。","difficulty":2},
+    {"id":8,"answer":"効","reading":"き","sentence":"この薬はよく{き}く。","meaning":"ききめがある。「聞く」とのちがいに注意。","difficulty":2},
+    {"id":9,"answer":"妻","reading":"つま","sentence":"{つま}と出かける。","meaning":"結婚している女の人。反対は「夫」。","difficulty":2},
+    {"id":10,"answer":"混","reading":"こ","sentence":"朝の電車が{こ}む。","meaning":"人や物がたくさん集まって、いっぱいになる。","difficulty":2},
+    {"id":11,"answer":"雑","reading":"ざっ","sentence":"{ざっ}草をぬく。","meaning":"いろいろなものがまじっていること。","difficulty":2},
+    {"id":12,"answer":"採","reading":"と","sentence":"山できのこを{と}る。","meaning":"さがして集める。「取る」とのちがいに注意。","difficulty":3},
+    {"id":13,"answer":"生","reading":"は","sentence":"庭に草が{は}える。","meaning":"草や毛などが出てくる。","difficulty":2},
+    {"id":14,"answer":"対比","reading":"たいひ","sentence":"二つの作品を{たいひ}する。","meaning":"二つのものをならべてくらべること。","difficulty":2},
+    {"id":15,"answer":"政治","reading":"せいじ","sentence":"国の{せいじ}について学ぶ。","meaning":"国や地域をおさめること。","difficulty":2},
+    {"id":16,"answer":"興味","reading":"きょうみ","sentence":"こん虫に{きょうみ}をもつ。","meaning":"おもしろいと感じて、心がひかれること。","difficulty":2},
+    {"id":17,"answer":"表示","reading":"ひょうじ","sentence":"ねだんを{ひょうじ}する。","meaning":"はっきり分かるようにしめすこと。","difficulty":2},
+    {"id":18,"answer":"主張","reading":"しゅちょう","sentence":"自分の考えを{しゅちょう}する。","meaning":"自分の意見を強く言うこと。","difficulty":2},
+    {"id":19,"answer":"個人的","reading":"こじんてき","sentence":"これは{こじんてき}な意見です。","meaning":"その人ひとりに関係すること。","difficulty":3},
+    {"id":20,"answer":"現在","reading":"げんざい","sentence":"{げんざい}の気温を調べる。","meaning":"今。いまのとき。","difficulty":2},
+    {"id":21,"answer":"独自","reading":"どくじ","sentence":"{どくじ}の方法で調べる。","meaning":"ほかとちがう、その人だけのもの。","difficulty":2},
+    {"id":22,"answer":"弁当","reading":"べんとう","sentence":"{べんとう}を持って遠足に行く。","meaning":"外で食べるために持っていく食事。","difficulty":1},
+    {"id":23,"answer":"提案","reading":"ていあん","sentence":"クラスの遊びを{ていあん}する。","meaning":"考えを出して、みんなにすすめること。","difficulty":2},
+    {"id":24,"answer":"余計","reading":"よけい","sentence":"{よけい}なことを言う。","meaning":"必要より多いこと。むだなこと。","difficulty":2},
+    {"id":25,"answer":"念仏","reading":"ねんぶつ","sentence":"お寺で{ねんぶつ}を唱える。","meaning":"仏さまの名前を唱えること。","difficulty":2},
+    {"id":26,"answer":"結果","reading":"けっか","sentence":"実験の{けっか}をまとめる。","meaning":"あることから生まれた、おわりのようす。","difficulty":1},
+    {"id":27,"answer":"観察","reading":"かんさつ","sentence":"アサガオを{かんさつ}する。","meaning":"よく注意して見ること。","difficulty":3},
+    {"id":28,"answer":"有効","reading":"ゆうこう","sentence":"時間を{ゆうこう}に使う。","meaning":"ききめがあること。役に立つこと。","difficulty":2},
+    {"id":29,"answer":"条件","reading":"じょうけん","sentence":"{じょうけん}に合う答えをさがす。","meaning":"ものごとが成り立つために必要なこと。","difficulty":2},
+    {"id":30,"answer":"保管","reading":"ほかん","sentence":"大切な書類を{ほかん}する。","meaning":"なくさないように大切にしまっておくこと。","difficulty":2},
+    {"id":31,"answer":"評価","reading":"ひょうか","sentence":"作品の{ひょうか}が高い。","meaning":"よしあしやねうちを決めること。","difficulty":2},
+    {"id":32,"answer":"賛成","reading":"さんせい","sentence":"その意見に{さんせい}する。","meaning":"よいと思って同じ考えになること。","difficulty":2},
+    {"id":33,"answer":"夫婦","reading":"ふうふ","sentence":"なかのよい{ふうふ}。","meaning":"結婚している二人。夫と妻。","difficulty":2},
+    {"id":34,"answer":"複雑","reading":"ふくざつ","sentence":"{ふくざつ}な形の図形。","meaning":"いろいろなことが入りくんでいること。","difficulty":3},
+    {"id":35,"answer":"省略","reading":"しょうりゃく","sentence":"説明の一部を{しょうりゃく}する。","meaning":"はぶくこと。","difficulty":3},
+    {"id":36,"answer":"採集","reading":"さいしゅう","sentence":"夏休みにこん虫{さいしゅう}をする。","meaning":"とって集めること。","difficulty":2},
+    {"id":37,"answer":"禁止","reading":"きんし","sentence":"ろうかを走るのは{きんし}です。","meaning":"してはいけないと止めること。","difficulty":2},
+    {"id":38,"answer":"少女","reading":"しょうじょ","sentence":"ひとりの{しょうじょ}が歌っている。","meaning":"女の子。","difficulty":1},
+    {"id":39,"answer":"可能性","reading":"かのうせい","sentence":"明日は雨がふる{かのうせい}がある。","meaning":"そうなるかもしれないこと。","difficulty":3},
+    {"id":40,"answer":"比べる","reading":"くらべる","sentence":"二本のひもの長さを{くらべる}。","meaning":"ちがいや同じところを調べる。","difficulty":2},
+    {"id":41,"answer":"示す","reading":"しめす","sentence":"地図で場所を{しめす}。","meaning":"分かるように見せる。","difficulty":2},
+    {"id":42,"answer":"支える","reading":"ささえる","sentence":"たおれないように柱で{ささえる}。","meaning":"たおれないように持つ。助ける。","difficulty":2},
+    {"id":43,"answer":"初めて","reading":"はじめて","sentence":"{はじめて}海で泳いだ。","meaning":"一回目。「始めて」とのちがいに注意。","difficulty":3},
+    {"id":44,"answer":"迷う","reading":"まよう","sentence":"森で道に{まよう}。","meaning":"どちらに行けばよいか分からなくなる。","difficulty":2},
+    {"id":45,"answer":"独り","reading":"ひとり","sentence":"{ひとり}で静かに考える。","meaning":"自分だけ。「一人」とのちがいに注意。","difficulty":3},
+    {"id":46,"answer":"寄せる","reading":"よせる","sentence":"つくえを窓ぎわに{よせる}。","meaning":"近づける。","difficulty":2},
+    {"id":47,"answer":"余る","reading":"あまる","sentence":"おかしが二つ{あまる}。","meaning":"多すぎて残る。","difficulty":2},
+    {"id":48,"answer":"覚える","reading":"おぼえる","sentence":"九九を{おぼえる}。","meaning":"忘れないように頭に入れる。","difficulty":2},
+    {"id":49,"answer":"保つ","reading":"たもつ","sentence":"教室をきれいに{たもつ}。","meaning":"同じよいようすを続ける。","difficulty":2},
+    {"id":50,"answer":"混じる","reading":"まじる","sentence":"米に麦が{まじる}。","meaning":"ちがうものが入り合う。","difficulty":2}
+  ],
+  "kanjiInfo": {
+    "得":"彳（ぎょうにんべん）","張":"弓（ゆみへん）","在":"土（つち）","検":"木（きへん）","寄":"宀（うかんむり）",
+    "仏":"亻（にんべん）","貸":"貝（かい）","効":"力（ちから）","妻":"女（おんな）","混":"氵（さんずい）",
+    "雑":"隹（ふるとり）","採":"扌（てへん）","生":"生（うまれる）","対":"寸（すん）","比":"比（くらべる）",
+    "政":"攵（のぶん）","治":"氵（さんずい）","興":"臼（うす）","味":"口（くちへん）","表":"衣（ころも）",
+    "示":"示（しめす）","主":"丶（てん）","個":"亻（にんべん）","人":"人（ひと）","的":"白（しろへん）",
+    "現":"王（おうへん）","独":"犭（けものへん）","自":"自（みずから）","弁":"廾（にじゅうあし）","当":"⺌（しょう）",
+    "提":"扌（てへん）","案":"木（き）","余":"人（ひとやね）","計":"言（ごんべん）","念":"心（こころ）",
+    "結":"糸（いとへん）","果":"木（き）","観":"見（みる）","察":"宀（うかんむり）","有":"月（つき）",
+    "条":"木（き）","件":"亻（にんべん）","保":"亻（にんべん）","管":"⺮（たけかんむり）","評":"言（ごんべん）",
+    "価":"亻（にんべん）","賛":"貝（かい）","成":"戈（ほこづくり）","夫":"大（だい）","婦":"女（おんなへん）",
+    "複":"衤（ころもへん）","省":"目（め）","略":"田（たへん）","集":"隹（ふるとり）","禁":"示（しめす）",
+    "止":"止（とめる）","少":"小（しょう）","女":"女（おんな）","可":"口（くち）","能":"月（にくづき）",
+    "性":"忄（りっしんべん）","支":"支（しにょう）","初":"刀（かたな）","迷":"辶（しんにょう）","覚":"見（みる）"
+  }
+}
+</script>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= 基本 ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const MIN=60e3,HOUR=60*MIN,DAY=24*HOUR;
+// 復習間隔：レベル0=すぐ / 1=10分後 / 2=翌日 / 3=3日後 / 4=7日後 / 5=14日後
+const INTERVALS=[0,10*MIN,1*DAY,3*DAY,7*DAY,14*DAY];
+const KFONT=getComputedStyle(document.documentElement).getPropertyValue('--kfont').trim()||'serif';
+const isKanji=c=>/[\u3400-\u9FFF々]/.test(c);
+const hasKana=s=>/[\u3040-\u309F]/.test(s);
+const chars=s=>[...s];
+const kanjiOf=s=>[...new Set(chars(s).filter(isKanji))];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const fmt=ts=>{if(!ts)return '—';const d=new Date(ts);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+const DPR=Math.min(window.devicePixelRatio||1,2.5);
+
+/* ================= 保存（window.storage → localStorage → メモリ） ================= */
+const Store={
+  async get(k){
+    try{if(window.storage&&window.storage.get){const r=await window.storage.get(k,false);if(r&&r.value)return JSON.parse(r.value)}}catch(e){}
+    try{const v=localStorage.getItem(k);if(v)return JSON.parse(v)}catch(e){}
+    return null;
+  },
+  async set(k,o){
+    const s=JSON.stringify(o);
+    try{if(window.storage&&window.storage.set)await window.storage.set(k,s,false)}catch(e){}
+    try{localStorage.setItem(k,s)}catch(e){}
+  },
+  async del(k){
+    try{if(window.storage&&window.storage.delete)await window.storage.delete(k,false)}catch(e){}
+    try{localStorage.removeItem(k)}catch(e){}
+  }
+};
+const QKEY='kanji100:qset';
+const dkey=()=>'kanji100:data:'+String(QSET.setId||'default').replace(/[^\w-]/g,'_');
+let saveT=null;
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>Store.set(dkey(),DATA),250)}
+
+/* ================= 問題データ（問題番号と漢字データを分離） ================= */
+let QSET=null,QUESTIONS=[],QMAP={},KINFO={},KUSES={},DATA=null,DEFAULT_SET=null;
+function setQSet(set){
+  QSET=set;
+  QUESTIONS=set.questions.map(q=>{
+    const n=chars(q.answer);
+    const category=q.category||(n.length===1?'単漢字':n.every(isKanji)?'熟語':'送りがな');
+    return {...q,category,difficulty:q.difficulty||2};
+  });
+  QMAP={};QUESTIONS.forEach(q=>QMAP[q.id]=q);
+  KINFO=set.kanjiInfo||{};
+  // 漢字 → 出てくる問題（2階層管理：出題パターン と 漢字そのもの）
+  KUSES={};
+  QUESTIONS.forEach(q=>kanjiOf(q.answer).forEach(k=>{(KUSES[k]=KUSES[k]||[]).push(q.id)}));
+}
+const Q=id=>QMAP[id];
+function validateSet(o){
+  if(!o||!Array.isArray(o.questions)||!o.questions.length)return 'questions がありません';
+  const ids=new Set();
+  for(const q of o.questions){
+    if(q.id==null||!q.answer||!q.sentence)return `id / answer / sentence が足りない問題があります（${esc(JSON.stringify(q).slice(0,60))}）`;
+    if(!/\{.+?\}/.test(q.sentence))return `問題${q.id}：sentence に {よみ} がありません`;
+    if(ids.has(q.id))return `問題番号 ${q.id} が重複しています`;
+    ids.add(q.id);
+    if(!q.reading)q.reading=(q.sentence.match(/\{(.+?)\}/)||[])[1]||'';
+  }
+  if(!o.setId)o.setId='custom-'+Date.now();
+  if(!o.title)o.title='漢字テスト';
+  return null;
+}
+
+/* ================= 学習データ ================= */
+// AI判定は claude.ai 上でのみ使える。GitHub Pages など単体で開いたときは最初から自己採点にする
+const IN_CLAUDE=!!window.storage;
+function defaultData(){return{v:1,q:{},k:{},tests:[],days:{},bestConsec:0,settings:{ai:IN_CLAUDE}}}
+function qs(id){return DATA.q[id]||(DATA.q[id]={att:0,ok:0,ng:0,close:0,hint:0,streak:0,level:0,due:0,last:0,lastWrong:0,prac:0})}
+// 見ないで書いた結果だけが「定着度」に反映される
+function record(id,res,{hinted=false,chars:cr=null}={}){
+  const s=qs(id),now=Date.now();
+  s.att++;s.prac++;s.last=now;
+  if(res==='ok'&&!hinted){s.ok++;s.streak++;s.level=Math.min(s.level+1,5);s.due=now+INTERVALS[s.level]}
+  else if(res==='ok'&&hinted){s.hint++;s.streak=0;s.due=now+10*MIN}
+  else if(res==='close'){s.close++;s.due=now+10*MIN}
+  else{s.ng++;s.streak=0;s.level=0;s.due=now;s.lastWrong=now}
+  if(!hinted){
+    chars(Q(id).answer).forEach((c,i)=>{
+      if(!isKanji(c))return;
+      const k=DATA.k[c]||(DATA.k[c]={ok:0,ng:0,last:0});
+      const good=cr&&cr[i]!=null?cr[i]:res!=='wrong';
+      good?k.ok++:k.ng++;k.last=now;
+    });
+  }
+  const d=today();DATA.days[d]=(DATA.days[d]||0)+1;
+  save();
+}
+function addPractice(id){qs(id).prac++;const d=today();DATA.days[d]=(DATA.days[d]||0)+1;save()}
+// 0=未練習 1=練習中 2=もう少し 3=かなりできる 4=マスター
+function stage(id){const s=DATA.q[id];if(!s||!s.att)return 0;if(s.streak>=3)return 4;if(s.streak===2)return 3;if(s.streak===1)return 2;return 1}
+function stageCounts(){const c=[0,0,0,0,0];QUESTIONS.forEach(q=>c[stage(q.id)]++);return c}
+const acc=s=>s&&s.att?s.ok/s.att:0;
+function weakIds(){
+  return QUESTIONS.filter(q=>{const s=DATA.q[q.id];return s&&(s.ng>0||s.close>0||s.hint>0)&&s.streak<2})
+    .sort((a,b)=>(DATA.q[b.id].lastWrong-DATA.q[a.id].lastWrong)||(acc(DATA.q[a.id])-acc(DATA.q[b.id])))
+    .map(q=>q.id);
+}
+// 今日の練習：①最近まちがえた ②正答率が低い ③しばらく練習していない ④未練習 ⑤定着済み
+function pickToday(n){
+  const now=Date.now();
+  const tier=q=>{const s=DATA.q[q.id];
+    if(!s||!s.att)return 4;
+    if(s.streak===0&&(s.ng>0||s.hint>0||s.close>0))return 1;
+    if(acc(s)<0.7)return 2;
+    if(s.due<=now)return 3;
+    return 5};
+  const key=q=>{const s=DATA.q[q.id]||{},t=tier(q);
+    if(t===1)return -s.lastWrong; if(t===2)return acc(s); if(t===3)return s.last; if(t===4)return q.id; return s.due};
+  return [...QUESTIONS].sort((a,b)=>(tier(a)-tier(b))||(key(a)-key(b))).slice(0,n).map(q=>q.id);
+}
+function consec100(){let c=0;for(let i=DATA.tests.length-1;i>=0;i--){if(DATA.tests[i].score===100)c++;else break}return c}
+function badgeText(){
+  const c=Math.max(consec100(),0),b=DATA.bestConsec||0;
+  if(b>=3)return `🏅 Sランク達成！（3回れんぞく100点）${c<3?'　今のれんぞく：'+c+'回':''}`;
+  if(b>=2)return `🏆 100点マスター！${c<2?'　今のれんぞく：'+c+'回':''}`;
+  if(c===1)return '💯 前回100点！ もう1回100点で「100点マスター」';
+  return '';
+}
+
+/* ================= 画面の基本 ================= */
+const app=$('#app');
+let HANDLERS={},TIMERS=[],CUR_W=null;
+function later(fn,ms){const t=setTimeout(fn,ms);TIMERS.push(t);return t}
+function view(html){TIMERS.forEach(clearTimeout);TIMERS=[];CUR_W=null;app.innerHTML=html;window.scrollTo(0,0)}
+function bind(h){HANDLERS={...COMMON,...h}}
+app.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const f=HANDLERS[b.dataset.act];if(f)f(b,e)});
+function toast(msg,ms=2200){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),ms)}
+function modal(html,buttons){
+  return new Promise(res=>{
+    const m=document.createElement('div');m.className='modal';
+    m.innerHTML=`<div class="mbox" role="dialog">${html}<div class="mbtns">${buttons.map((b,i)=>`<button class="btn ${b.cls||''}" data-i="${i}">${b.label}</button>`).join('')}</div></div>`;
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;const v=buttons[+b.dataset.i].value;const out=typeof v==='function'?v(m):v;if(out===false)return;m.remove();res(out)});
+  });
+}
+const confirmBox=(msg,yes='はい',no='やめる')=>modal(`<h3>${msg}</h3>`,[{label:yes,value:true,cls:'primary'},{label:no,value:false}]);
+function judging(on,text='判定中…'){let j=$('.judging');if(on){if(!j){j=document.createElement('div');j.className='judging';document.body.appendChild(j)}j.innerHTML=`<div><div class="spin"></div><div class="jt">${text}</div></div>`}else if(j)j.remove()}
+
+/* ================= 文の表示 ================= */
+function sentenceHTML(q,mode){
+  return esc(q.sentence).replace(/\{(.+?)\}/,(_,r)=>{
+    if(mode!=='answer')return `「<span class="yomi">${r}</span>」`;
+    const tail=(q.answer.match(/[\u3040-\u309F]+$/)||[''])[0];          // 送りがな
+    const head=q.answer.slice(0,q.answer.length-tail.length)||q.answer;
+    const rt=(tail&&r.endsWith(tail))?r.slice(0,r.length-tail.length):r;
+    return `<ruby class="ans">${esc(head)}<rt>${rt}</rt></ruby>${head===q.answer?'':esc(tail)}`;
+  });
+}
+
+/* ================= 手書きマス ================= */
+function drawStroke(c,st,s,w){
+  if(!st.length)return;
+  c.lineWidth=w;
+  if(st.length===1){c.beginPath();c.arc(st[0][0]*s,st[0][1]*s,w/2,0,Math.PI*2);c.fill();return}
+  c.beginPath();c.moveTo(st[0][0]*s,st[0][1]*s);
+  for(let i=1;i<st.length;i++)c.lineTo(st[i][0]*s,st[i][1]*s);
+  c.stroke();
+}
+function drawGuide(cv,ch,size){
+  const c=cv.getContext('2d');c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,size,size);
+  c.font=`${size*0.8}px ${KFONT}`;c.textAlign='center';c.textBaseline='middle';c.fillStyle='rgba(63,107,79,.2)';
+  c.fillText(ch,size/2,size*0.53);
+}
+function makeWriter(host,n,opts={}){
+  let strokes=Array.from({length:n},()=>[]);const order=[];let cells=[];let lastW=0;
+  const lw=s=>Math.max(3,s*0.055);
+  function ctxOf(i){const c=cells[i].k.getContext('2d');c.setTransform(DPR,0,0,DPR,0,0);c.lineCap='round';c.lineJoin='round';c.strokeStyle='#1f2a25';c.fillStyle='#1f2a25';return c}
+  function redraw(i){const c=ctxOf(i),s=cells[i].size;c.clearRect(0,0,s,s);strokes[i].forEach(st=>drawStroke(c,st,s,lw(s)))}
+  function layout(){
+    const W=host.clientWidth||Math.min(window.innerWidth-32,688);lastW=W;
+    const gap=n>1?8:0;
+    const size=Math.floor(Math.max(80,Math.min(opts.max||210,(W-gap*(n-1))/n)));
+    host.innerHTML='';host.style.gap=gap+'px';cells=[];
+    for(let i=0;i<n;i++){
+      const el=document.createElement('div');el.className='cell';el.style.width=el.style.height=size+'px';
+      const g=document.createElement('canvas'),k=document.createElement('canvas');
+      [g,k].forEach(cv=>{cv.width=Math.round(size*DPR);cv.height=Math.round(size*DPR);cv.style.width=cv.style.height=size+'px'});
+      g.className='gcv';k.className='kcv';el.append(g,k);host.append(el);
+      cells.push({el,g,k,size});
+      if(opts.guide&&opts.guide[i])drawGuide(g,opts.guide[i],size);
+      redraw(i);attach(i);
+    }
+  }
+  function attach(i){
+    const cv=cells[i].k;let cur=null;
+    const pos=e=>{const r=cv.getBoundingClientRect();return[Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))]};
+    cv.addEventListener('pointerdown',e=>{
+      if(host.classList.contains('off'))return;
+      e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(_){}
+      cur=[pos(e)];strokes[i].push(cur);order.push(i);
+      const c=ctxOf(i);drawStroke(c,cur,cells[i].size,lw(cells[i].size));
+    });
+    cv.addEventListener('pointermove',e=>{
+      if(!cur)return;e.preventDefault();
+      const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+      const c=ctxOf(i),s=cells[i].size;c.lineWidth=lw(s);
+      for(const ev of (evs.length?evs:[e])){
+        const p=pos(ev),last=cur[cur.length-1];
+        if(Math.hypot(p[0]-last[0],p[1]-last[1])<0.004)continue;
+        cur.push(p);c.beginPath();c.moveTo(last[0]*s,last[1]*s);c.lineTo(p[0]*s,p[1]*s);c.stroke();
+      }
+    });
+    const end=()=>{if(cur){cur=null;opts.onStroke&&opts.onStroke(i)}};
+    cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);cv.addEventListener('lostpointercapture',end);
+  }
+  const api={
+    host,
+    undo(){const i=order.pop();if(i==null)return;strokes[i].pop();redraw(i);cells[i].el.classList.remove('c-ok','c-close','c-ng')},
+    clear(){strokes=strokes.map(()=>[]);order.length=0;cells.forEach((c,i)=>{redraw(i);c.el.classList.remove('c-ok','c-close','c-ng')})},
+    isEmpty(){return strokes.every(s=>!s.length)},
+    getStrokes(){return JSON.parse(JSON.stringify(strokes))},
+    setStrokes(s){if(!s)return;strokes=Array.from({length:n},(_,i)=>JSON.parse(JSON.stringify(s[i]||[])));order.length=0;strokes.forEach((st,i)=>st.forEach(()=>order.push(i)));cells.forEach((_,i)=>redraw(i))},
+    strokesAt(i){return strokes[i]},
+    toImage(){return strokesToImage(strokes,n)},
+    setDisabled(v){host.classList.toggle('off',v)},
+    mark(i,cls){cells[i].el.classList.remove('c-ok','c-close','c-ng');cells[i].el.classList.add(cls)},
+    relayout(){if(Math.abs((host.clientWidth||0)-lastW)>4)layout()}
+  };
+  layout();CUR_W=api;return api;
+}
+let rzT=null;
+window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(CUR_W&&CUR_W.host.isConnected)CUR_W.relayout()},200)});
+function strokesToImage(strokes,n,S=200){
+  const pad=14,cv=document.createElement('canvas');
+  cv.width=n*S+(n+1)*pad;cv.height=S+pad*2;
+  const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);
+  for(let i=0;i<n;i++){
+    const x=pad+i*(S+pad),y=pad;
+    c.save();c.strokeStyle='#b9c9bc';c.lineWidth=3;c.strokeRect(x,y,S,S);
+    c.setLineDash([6,6]);c.lineWidth=1.5;c.strokeStyle='#dfe8dc';
+    c.beginPath();c.moveTo(x+S/2,y);c.lineTo(x+S/2,y+S);c.moveTo(x,y+S/2);c.lineTo(x+S,y+S/2);c.stroke();c.restore();
+    c.save();c.translate(x,y);c.lineCap='round';c.lineJoin='round';c.strokeStyle='#111';c.fillStyle='#111';
+    (strokes[i]||[]).forEach(st=>drawStroke(c,st,S,S*0.055));c.restore();
+  }
+  return cv.toDataURL('image/png');
+}
+// なぞり判定：お手本の線をどれだけなぞれたか × はみ出しの少なさ
+function traceScore(ch,st){
+  if(!st||!st.length)return 0;
+  const N=72;
+  const mk=()=>{const c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d',{willReadFrequently:true});x.lineCap='round';x.lineJoin='round';return x};
+  const text=(x,thick)=>{x.font=`${N*0.8}px ${KFONT}`;x.textAlign='center';x.textBaseline='middle';x.fillStyle='#000';x.strokeStyle='#000';if(thick){x.lineWidth=N*0.1;x.strokeText(ch,N/2,N*0.53)}x.fillText(ch,N/2,N*0.53)};
+  const gT=mk();text(gT,false);const gK=mk();text(gK,true);
+  const iT=mk();st.forEach(s=>drawStroke(iT,s,N,N*0.055));
+  const iK=mk();st.forEach(s=>drawStroke(iK,s,N,N*0.17));
+  const d=x=>x.getImageData(0,0,N,N).data;
+  const a=d(gT),b=d(gK),c=d(iT),e=d(iK);
+  let g=0,cov=0,it=0,prec=0;
+  for(let p=3;p<a.length;p+=4){
+    if(a[p]>80){g++;if(e[p]>40)cov++}
+    if(c[p]>80){it++;if(b[p]>40)prec++}
+  }
+  if(!g||!it)return 0;
+  return Math.min(cov/g,prec/it);
+}
+
+/* ================= 書き順（KanjiVG） ================= */
+const KVG={};
+async function loadKVG(ch){
+  if(KVG[ch]!==undefined)return KVG[ch];
+  const hex=ch.codePointAt(0).toString(16).padStart(5,'0');
+  const urls=[`https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@master/kanji/${hex}.svg`,`https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/${hex}.svg`];
+  for(const u of urls){
+    try{
+      const r=await fetch(u);if(!r.ok)continue;
+      const doc=new DOMParser().parseFromString(await r.text(),'image/svg+xml');
+      const ps=$$('path',doc).filter(p=>/-s\d+$/.test(p.getAttribute('id')||''))
+        .sort((x,y)=>+x.id.match(/-s(\d+)$/)[1]-+y.id.match(/-s(\d+)$/)[1]).map(p=>p.getAttribute('d'));
+      if(ps.length)return KVG[ch]=ps;
+    }catch(e){}
+  }
+  return KVG[ch]=null;
+}
+async function strokePanel(el,ch){
+  el.innerHTML=`<div class="sp-box"><div class="sp-fallback">${esc(ch)}</div></div><div class="sp-ctrl"><span class="sp-n">書き順を読みこみ中…</span></div>`;
+  const paths=await loadKVG(ch);
+  if(!el.isConnected)return;
+  if(!paths){el.querySelector('.sp-ctrl').innerHTML='<small>書き順アニメはインターネットにつながっているときに表示されます</small>';return}
+  const box=el.querySelector('.sp-box');
+  box.innerHTML=`<svg viewBox="0 0 109 109" aria-label="${esc(ch)}の書き順"><line x1="54.5" y1="0" x2="54.5" y2="109" stroke="#e3ebe0" stroke-dasharray="3 3"/><line x1="0" y1="54.5" x2="109" y2="54.5" stroke="#e3ebe0" stroke-dasharray="3 3"/><g class="sp-bg">${paths.map(d=>`<path d="${esc(d)}"/>`).join('')}</g><g class="sp-fg">${paths.map(d=>`<path d="${esc(d)}"/>`).join('')}</g></svg>`;
+  const fg=$$('.sp-fg path',box);
+  fg.forEach(p=>{const L=p.getTotalLength()+1;p.dataset.len=L;p.style.strokeDasharray=L;p.style.strokeDashoffset=L});
+  const ctrl=el.querySelector('.sp-ctrl');
+  ctrl.innerHTML=`<button data-sp="play">▶ 書き順</button><button data-sp="step">1画ずつ</button><span class="sp-n">${paths.length}画</span>`;
+  const label=ctrl.querySelector('.sp-n');
+  let shown=0,timers=[];
+  const reset=()=>{timers.forEach(clearTimeout);timers=[];shown=0;fg.forEach(p=>{p.style.transition='none';p.style.strokeDashoffset=p.dataset.len;p.classList.remove('cur')})};
+  const showOne=(i,dur)=>{fg.forEach(p=>p.classList.remove('cur'));const p=fg[i];p.classList.add('cur');p.style.transition='none';p.style.strokeDashoffset=p.dataset.len;void p.getBoundingClientRect();p.style.transition=`stroke-dashoffset ${dur}ms linear`;p.style.strokeDashoffset=0};
+  ctrl.onclick=e=>{
+    const b=e.target.closest('[data-sp]');if(!b)return;
+    if(b.dataset.sp==='play'){reset();fg.forEach((_,i)=>timers.push(setTimeout(()=>{if(el.isConnected){showOne(i,420);label.textContent=`${i+1} / ${paths.length}画`}},i*560)))}
+    else{timers.forEach(clearTimeout);timers=[];if(shown>=fg.length)reset();showOne(shown,380);shown++;label.textContent=`${shown}画目 / ${paths.length}画`}
+  };
+}
+
+/* ================= 判定（AI → 自己採点） ================= */
+let AI_DOWN=false;
+async function aiJudge(q,dataUrl){
+  const n=chars(q.answer).length;
+  const prompt=`あなたは小学校の先生として、漢字テストの手書き解答を採点します。
+画像には、児童が書いた解答が左から順に${n}マス並んでいます（1マスに1文字）。
+問題文：${q.sentence.replace(/\{(.+?)\}/,'「$1」')}
+正解：「${q.answer}」（${chars(q.answer).join('・')}）
+
+【採点の方針】
+・字の美しさ・上手さは評価しない。多少くずれていても、正しい字として読めるなら correct。
+・正しい字だと分かるが、線が足りない／多い、形が大きくちがうなど、テストで直されそうな点がある → close
+・別の字（形の似た別の漢字をふくむ）、空白のマス、読み取れない → wrong
+・送りがながある場合は、送りがなも正解と一致しているか確認する。漢字で書くべき所がひらがななら wrong。
+
+【出力】次のJSONだけを出力（説明・コードブロック不要）：
+{"result":"correct|close|wrong","chars":[{"expected":"1文字目の正解","ok":true}],"comment":"小学5年生にやさしく伝える一言（25字以内。close・wrongなら気をつける所）"}`;
+  const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),40000);
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:[
+        {type:'image',source:{type:'base64',media_type:'image/png',data:dataUrl.split(',')[1]}},
+        {type:'text',text:prompt}]}]})});
+    if(!r.ok)throw new Error('http '+r.status);
+    const data=await r.json();
+    const text=(data.content||[]).map(c=>c.type==='text'?c.text:'').join('');
+    const m=text.replace(/```json|```/g,'').match(/\{[\s\S]*\}/);if(!m)throw new Error('no json');
+    const j=JSON.parse(m[0]);
+    const res={correct:'ok',close:'close',wrong:'wrong'}[j.result];if(!res)throw new Error('bad result');
+    const cr=chars(q.answer).map((_,i)=>j.chars&&j.chars[i]&&typeof j.chars[i].ok==='boolean'?j.chars[i].ok:null);
+    return{res,chars:cr,comment:String(j.comment||'').slice(0,60),by:'ai'};
+  }finally{clearTimeout(to)}
+}
+function compareHTML(q,img){return `<div class="compare"><figure><img src="${img}" alt="あなたが書いた字"><figcaption>あなたの字</figcaption></figure><figure><div class="ansbig">${esc(q.answer)}</div><figcaption>正しい字</figcaption></figure></div>`}
+function selfJudge(q,img){
+  return modal(`<h3>自分で丸つけしよう</h3><p class="msub">お手本と見くらべて、正直にえらんでね。字のきれいさではなく「正しい字か」で決めよう。</p>${compareHTML(q,img)}`,
+    [{label:'◎ 正しく書けた',value:'ok',cls:'ok'},{label:'△ 形が少しちがう',value:'close',cls:'close'},{label:'✕ ちがう字・書けなかった',value:'wrong',cls:'ng'}])
+    .then(res=>({res,chars:null,comment:'',by:'self'}));
+}
+async function judgeWriting(q,img){
+  if(DATA.settings.ai&&!AI_DOWN){
+    judging(true);
+    try{const r=await aiJudge(q,img);judging(false);return r}
+    catch(e){judging(false);AI_DOWN=true;toast('AI判定が使えないので、自分で丸つけしよう',3000)}
+  }
+  return selfJudge(q,img);
+}
+const MARKS={
+  ok:`<svg viewBox="0 0 100 100"><circle class="draw" cx="50" cy="50" r="40" fill="none" stroke="#e0312b" stroke-width="7" stroke-linecap="round"/><circle class="draw" cx="50" cy="50" r="24" fill="none" stroke="#e0312b" stroke-width="6" stroke-linecap="round" style="animation-delay:.3s"/></svg>`,
+  close:`<svg viewBox="0 0 100 100"><path class="draw" d="M50 14 L88 82 L12 82 Z" fill="none" stroke="#d98a00" stroke-width="7" stroke-linejoin="round"/></svg>`,
+  wrong:`<svg viewBox="0 0 100 100"><path class="draw" d="M70 30 A28 28 0 1 0 76 58" fill="none" stroke="#2c5aa0" stroke-width="7" stroke-linecap="round"/><path class="draw" d="M80 22 L72 32 L84 36" fill="none" stroke="#2c5aa0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" style="animation-delay:.4s"/></svg>`
+};
+function resultHTML(q,r,img,hinted){
+  const t={
+    ok:['せいかい！',hinted?'ヒントを使って書けたね。次は見ないで書いてみよう。':pick(['見ないで書けたね！','ばっちり！ その調子！','正しく書けたね！'])],
+    close:['おしい！','字は合っているよ。お手本で形をたしかめよう。'],
+    wrong:['おしい！ もう一回','お手本をよく見て、もう一回書いてみよう。']
+  }[r.res];
+  return `<div class="result r-${r.res}"><div class="rmark">${MARKS[r.res]}</div><div class="rtitle">${t[0]}</div><p class="rmsg">${t[1]}</p>
+    ${r.comment?`<p class="rcom">💬 ${esc(r.comment)}</p>`:''}${compareHTML(q,img)}<p class="sent small" style="margin-top:8px">${sentenceHTML(q,'answer')}</p></div>`;
+}
+
+/* ================= 共通ヘッダー ================= */
+const MODES=[['learn','おぼえる'],['trace','なぞる'],['see','見て書く'],['recall','思い出す']];
+function head(ctx,label){
+  if(ctx.session){
+    const pct=Math.round(SES.i/SES.tasks.length*100);
+    return `<div class="shead"><button class="x" data-act="quit" aria-label="練習をやめる">✕</button><div class="bar"><i style="width:${pct}%"></i></div><span class="tag">${label}</span></div>${SES.combo>=2?`<div class="combo">🔥 ${SES.combo}問れんぞく正解</div>`:''}`;
+  }
+  if(ctx.study){
+    const q=Q(ctx.id);
+    return `<div class="qnav"><button class="small-btn" data-act="back">一覧</button><button class="small-btn" data-act="prevq" aria-label="前の問題">◀</button><div class="no">${q.id}番</div><button class="small-btn" data-act="nextq" aria-label="次の問題">▶</button></div>
+    <div class="tabs">${MODES.map(([m,l])=>`<button class="tab ${m===ctx.mode?'on':''}" data-act="tab" data-mode="${m}">${l}</button>`).join('')}</div>`;
+  }
+  return '';
+}
+let STUDY_ID=null;
+const COMMON={
+  quit:async()=>{if(await confirmBox('練習をやめますか？','やめる','つづける')){SES=null;go('home')}},
+  back:()=>go('list'),
+  tab:b=>go('study',{id:STUDY_ID,mode:b.dataset.mode}),
+  prevq:()=>{const i=QUESTIONS.findIndex(q=>q.id===STUDY_ID);go('study',{id:QUESTIONS[(i-1+QUESTIONS.length)%QUESTIONS.length].id,mode:'learn'})},
+  nextq:()=>{const i=QUESTIONS.findIndex(q=>q.id===STUDY_ID);go('study',{id:QUESTIONS[(i+1)%QUESTIONS.length].id,mode:'learn'})},
+  home:()=>go('home')
+};
+
+/* ================= MODE 1：おぼえる ================= */
+function kanjiCardsHTML(q){
+  return kanjiOf(q.answer).map(k=>{
+    const uses=KUSES[k]||[];
+    return `<div class="kcard"><div class="stroke" data-ch="${esc(k)}"></div><div>
+      <div class="kch">${esc(k)}</div>
+      ${KINFO[k]?`<div class="kmeta">部首：${esc(KINFO[k])}</div>`:''}
+      ${uses.length>1?`<div class="uses">テストでこの字が出る問題<br>${uses.map(id=>`<span class="u ${id===q.id?'me':''}">${id}　${esc(Q(id).answer)}</span>`).join('')}</div><span class="warn">読み方・使い方がちがうよ。セットで覚えよう</span>`:''}
+    </div></div>`}).join('');
+}
+function learnView(id,ctx){
+  const q=Q(id);
+  view(`${head(ctx,'おぼえる')}
+  <div class="prompt"><div class="lab">問題文</div><p class="sent">${sentenceHTML(q,'answer')}</p></div>
+  <div class="prompt"><div class="bigans">${chars(q.answer).map(c=>`<span class="${isKanji(c)?'':'kana'}">${esc(c)}</span>`).join('')}</div>
+    <div class="ydisp">読み：<b>${esc(q.reading)}</b></div><p class="mean">${esc(q.meaning||'')}</p></div>
+  ${kanjiCardsHTML(q)}
+  <button class="btn primary" data-act="done">${ctx.session?'おぼえた！ 次へ':'なぞって練習する'}</button>`);
+  $$('.stroke').forEach(el=>strokePanel(el,el.dataset.ch));
+  bind({done:()=>ctx.onDone()});
+}
+
+/* ================= MODE 2：なぞる ================= */
+function traceView(id,ctx){
+  const q=Q(id);let tries=0;
+  view(`${head(ctx,ctx.review?'お手本でなおす':'なぞる')}
+  <div class="prompt"><div class="lab">${ctx.review?'正しい字をお手本で確認して、ていねいになぞろう':'うすい字をなぞろう。書き順にも気をつけてね'}</div><p class="sent">${sentenceHTML(q,'answer')}</p></div>
+  ${ctx.review?`<div style="display:grid;grid-template-columns:repeat(${Math.min(3,kanjiOf(q.answer).length)},1fr);gap:8px;margin-top:12px">${kanjiOf(q.answer).map(k=>`<div class="stroke" data-ch="${esc(k)}"></div>`).join('')}</div>`:kanjiCardsHTML(q)}
+  <div class="wwrap"><div class="writer" id="w"></div></div>
+  <div class="tools"><button class="tbtn" data-act="undo">↶ 1画もどす</button><button class="tbtn" data-act="clear">書き直す</button></div>
+  <div id="act"><button class="btn primary" data-act="judge">なぞれた！</button></div>`);
+  $$('.stroke').forEach(el=>strokePanel(el,el.dataset.ch));
+  const ans=chars(q.answer);
+  const W=makeWriter($('#w'),ans.length,{guide:ans});
+  bind({
+    undo:()=>W.undo(),clear:()=>{W.clear();$('#act').innerHTML='<button class="btn primary" data-act="judge">なぞれた！</button>'},
+    judge:()=>{
+      const empty=ans.findIndex((_,i)=>!W.strokesAt(i).length);
+      if(empty>=0)return toast(`${empty+1}マス目もなぞってね`);
+      tries++;
+      const sc=ans.map((c,i)=>traceScore(c,W.strokesAt(i)));
+      sc.forEach((v,i)=>W.mark(i,v>=0.7?'c-ok':v>=0.5?'c-close':'c-ng'));
+      const m=Math.min(...sc);
+      addPractice(q.id);
+      const msg=m>=0.7?['◎','上手になぞれたね！']:m>=0.5?['△','だいたいOK！ 線のはみ出しに気をつけよう']:['もう一回','線をよく見て、ていねいになぞってみよう'];
+      $('#act').innerHTML=`<div class="result ${m>=0.7?'r-ok':m>=0.5?'r-close':'r-wrong'}" style="padding:12px"><div class="rtitle">${msg[0]}</div><p>${msg[1]}</p></div>
+        ${m<0.7?`<button class="btn" data-act="again">もう一回なぞる</button>`:''}
+        ${m>=0.5||tries>=2?`<button class="btn primary" data-act="next">次へ</button>`:''}`;
+    },
+    again:()=>{W.clear();$('#act').innerHTML='<button class="btn primary" data-act="judge">なぞれた！</button>'},
+    next:()=>ctx.onDone()
+  });
+}
+
+/* ================= MODE 3：見て書く ================= */
+function seeView(id,ctx){
+  const q=Q(id);
+  view(`${head(ctx,'見て書く')}
+  <div class="prompt"><div class="lab">よく見て覚えたら「かくして書く」をおそう</div><p class="sent">${sentenceHTML(q,'answer')}</p></div>
+  <div class="prompt"><div class="bigans">${esc(q.answer)}</div></div>
+  <button class="btn primary" data-act="hide">かくして書く</button>`);
+  bind({hide:()=>{
+    view(`${head(ctx,'見て書く')}
+    <div class="prompt"><div class="lab">さっき見た字を書こう</div><p class="sent">${sentenceHTML(q,'blank')}</p></div>
+    <div class="wwrap"><div class="writer" id="w"></div></div>
+    <div id="act"><div class="tools"><button class="tbtn" data-act="undo">↶ 1画もどす</button><button class="tbtn" data-act="clear">書き直す</button></div>
+    <button class="btn primary" data-act="judge">判定する</button></div><div id="res"></div>`);
+    const W=makeWriter($('#w'),chars(q.answer).length);
+    let busy=false;
+    bind({undo:()=>W.undo(),clear:()=>W.clear(),
+      judge:async()=>{
+        if(W.isEmpty())return toast('マスに書いてから判定してね');
+        if(busy)return;busy=true;
+        const img=W.toImage();const r=await judgeWriting(q,img);busy=false;
+        addPractice(q.id);W.setDisabled(true);$('#act').style.display='none';
+        $('#res').innerHTML=resultHTML(q,r,img,false)+`<div class="rbtns">${r.res!=='ok'?'<button class="btn" data-act="re">もう一回見て書く</button>':''}<button class="btn primary" data-act="next">${ctx.study?'思い出して書く':'次へ'}</button></div>`;
+        $('#res').scrollIntoView({behavior:'smooth',block:'start'});
+      },
+      re:()=>seeView(id,ctx),next:()=>ctx.onDone()});
+  }});
+}
+
+/* ================= MODE 4：思い出して書く（いちばん大事） ================= */
+function recallView(id,ctx){
+  const q=Q(id);let hintLv=0,busy=false;
+  const n=chars(q.answer).length;
+  view(`${head(ctx,'思い出して書く')}
+  <div class="prompt"><div class="lab">読みから漢字を思い出して書こう</div><p class="sent">${sentenceHTML(q,'blank')}</p>
+    <div class="note2">${n}マス${hasKana(q.answer)?'（送りがなも書こう）':''}</div></div>
+  <div id="hint"></div>
+  <div class="wwrap"><div class="writer" id="w"></div><div class="flash" id="flash"></div></div>
+  <div id="act">
+    <div class="tools"><button class="tbtn" data-act="undo">↶ 1画もどす</button><button class="tbtn" data-act="clear">書き直す</button><button class="tbtn hint" data-act="hint">💡 ヒント</button></div>
+    <button class="btn primary" data-act="judge">判定する</button>
+  </div><div id="res"></div>`);
+  kanjiOf(q.answer).forEach(k=>loadKVG(k));
+  const W=makeWriter($('#w'),n);
+  const hintBtn=()=>$('[data-act="hint"]');
+  function after(r,img){
+    const hinted=hintLv>0;let done=false;
+    const commit=()=>{if(done)return;done=true;record(q.id,r.res,{hinted,chars:r.chars});ctx.onResult&&ctx.onResult(q.id,r.res,hinted)};
+    let btns='';
+    if(ctx.session){
+      if(r.res==='close')btns+='<button class="btn" data-act="tr">なぞってたしかめる</button>';
+      btns+=`<button class="btn primary" data-act="next">${r.res==='wrong'?'お手本でなおそう':'次へ'}</button>`;
+    }else{
+      if(r.res!=='ok')btns+='<button class="btn" data-act="tr">なぞって練習</button>';
+      btns+='<button class="btn" data-act="retry">もう一回書く</button><button class="btn primary" data-act="next">次の問題へ</button>';
+    }
+    $('#res').innerHTML=resultHTML(q,r,img,hinted)+`<div class="rbtns">${btns}</div>`+(r.by==='ai'?'<button class="link" data-act="fix">判定がちがうと思ったら</button>':'');
+    if(r.chars)r.chars.forEach((v,i)=>v!=null&&W.mark(i,v?'c-ok':'c-ng'));
+    $('#res').scrollIntoView({behavior:'smooth',block:'start'});
+    bind({
+      next:()=>{commit();ctx.onDone()},
+      tr:()=>{commit();if(ctx.session){SES.tasks.splice(SES.i+1,0,{id:q.id,step:'trace'});ctx.onDone()}else go('study',{id:q.id,mode:'trace'})},
+      retry:()=>{commit();go('study',{id:q.id,mode:'recall'})},
+      fix:async()=>{if(done)return;const r2=await selfJudge(q,img);after(r2,img)}
+    });
+  }
+  bind({
+    undo:()=>W.undo(),clear:()=>W.clear(),
+    hint:()=>{
+      if(hintLv>=4)return;hintLv++;
+      const box=$('#hint');
+      if(hintLv===1)box.insertAdjacentHTML('beforeend',`<div class="hint">💡1　いみ：${esc(q.meaning||'')}</div>`);
+      if(hintLv===2){
+        const parts=chars(q.answer).map((c,i)=>{
+          if(!isKanji(c)||!KINFO[c])return null;
+          const sc=KVG[c]?`（${KVG[c].length}画）`:'';
+          // 字そのものが部首の場合は、答えが見えないように言いかえる
+          if(KINFO[c].startsWith(c))return `${i+1}文字目は、字そのものが部首になっている字${sc}`;
+          return `${i+1}文字目の部首は <b>${esc(KINFO[c])}</b>${sc}`;
+        }).filter(Boolean);
+        box.insertAdjacentHTML('beforeend',`<div class="hint">💡2　${parts.length?parts.join('<br>'):'部首のデータがありません'}</div>`);
+      }
+      if(hintLv===3){const f=$('#flash');f.textContent=q.answer;f.classList.add('on');later(()=>f.classList.remove('on'),900);box.insertAdjacentHTML('beforeend','<div class="hint">💡3　お手本を一しゅんだけ見せたよ</div>')}
+      if(hintLv===4)box.insertAdjacentHTML('beforeend',`<div class="hint">💡4　お手本：<span class="hans">${esc(q.answer)}</span><br><small>見て書いた場合は「ヒントあり」として記録されます</small></div>`);
+      const b=hintBtn();b.textContent=hintLv>=4?'💡 ヒント 全部':`💡 ヒント ${hintLv}/4`;if(hintLv>=4)b.disabled=true;
+    },
+    judge:async()=>{
+      if(W.isEmpty())return toast('マスに書いてから判定してね');
+      if(busy)return;busy=true;
+      const img=W.toImage();const r=await judgeWriting(q,img);busy=false;
+      W.setDisabled(true);$('#act').style.display='none';
+      after(r,img);
+    }
+  });
+}
+
+/* ================= 練習セッション（今日の練習／苦手／重点） ================= */
+let SES=null;
+function startSession(type,ids){
+  if(!ids.length)return toast(type==='weak'?'苦手な問題はありません！':'練習する問題がありません');
+  const tasks=[];
+  ids.forEach(id=>{
+    const s=DATA.q[id];
+    if(type==='today'&&(!s||!s.att))tasks.push({id,step:'learn'},{id,step:'trace'});
+    if(type==='focus')tasks.push({id,step:'review'});
+    tasks.push({id,step:'recall'});
+  });
+  SES={type,ids,tasks,i:0,first:{},final:{},retry:{},combo:0,maxCombo:0,before:stageCounts()};
+  runTask();
+}
+function runTask(){
+  if(!SES)return go('home');
+  if(SES.i>=SES.tasks.length)return go('sessionResult');
+  const t=SES.tasks[SES.i];
+  const ctx={session:true,onDone:()=>{SES.i++;runTask()},onResult:sesResult};
+  if(t.step==='learn')learnView(t.id,ctx);
+  else if(t.step==='trace'||t.step==='review')traceView(t.id,{...ctx,review:t.step==='review'});
+  else recallView(t.id,ctx);
+}
+function sesResult(id,res,hinted){
+  if(!(id in SES.first))SES.first[id]={res,hinted};
+  SES.final[id]={res,hinted};
+  if(res==='ok'&&!hinted){SES.combo++;SES.maxCombo=Math.max(SES.maxCombo,SES.combo)}else SES.combo=0;
+  const r=SES.retry[id]||0;
+  if(res==='wrong'){
+    SES.tasks.splice(SES.i+1,0,{id,step:'review'});
+    if(r<2){SES.retry[id]=r+1;SES.tasks.splice(Math.min(SES.i+5,SES.tasks.length),0,{id,step:'recall'})}
+  }else if((hinted||res==='close')&&r<1){
+    SES.retry[id]=r+1;SES.tasks.splice(Math.min(SES.i+4,SES.tasks.length),0,{id,step:'recall'});
+  }
+}
+function sessionResult(){
+  const ids=SES?SES.ids:[];
+  const good=ids.filter(id=>SES.first[id]&&SES.first[id].res==='ok'&&!SES.first[id].hinted);
+  const again=ids.filter(id=>!good.includes(id));
+  const after=stageCounts();
+  const newMaster=after[4]-SES.before[4];
+  const type=SES.type;
+  view(`<h2 class="pg">今日の結果</h2>
+  <div class="sheet">
+    <div style="font-size:40px">🎉</div>
+    <p style="font-weight:800;font-size:20px">${ids.length}問 練習したよ！</p>
+    <div class="counts"><span class="c-ok">一回で書けた ${good.length}</span><span>最高れんぞく正解 ${SES.maxCombo}</span></div>
+    ${newMaster>0?`<p style="margin-top:8px;font-weight:800">🏆 マスターが ${newMaster}個 ふえた！</p>`:''}
+    ${good.length?`<div class="secttl">見ないで書けた</div><div class="chips">${good.map(id=>`<span class="chip"><b>${id}</b>${esc(Q(id).answer)}</span>`).join('')}</div>`:''}
+    ${again.length?`<div class="secttl">次もいっしょに練習しよう</div><div class="chips">${again.map(id=>`<span class="chip ng"><b>${id}</b>${esc(Q(id).answer)}</span>`).join('')}</div>`:''}
+  </div>
+  <button class="btn primary" data-act="more">${type==='today'?'もう10問やる':'苦手をもう一度'}</button>
+  <button class="btn" data-act="home">トップにもどる</button>`);
+  SES=null;
+  bind({more:()=>type==='today'?startSession('today',pickToday(10)):startSession('weak',weakIds().slice(0,10))});
+}
+
+/* ================= 50問テスト ================= */
+let TEST=null;
+// テストのたびに出題順をシャッフル（前回と同じ順番にはしない）
+let LAST_ORDER='';
+function shuffledOrder(){
+  const n=QUESTIONS.length;let a;
+  do{a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
+  while(n>2&&a.join()===LAST_ORDER);
+  LAST_ORDER=a.join();return a;
+}
+const TQ=i=>QUESTIONS[TEST.order[i]];
+function testStart(){
+  const last=DATA.tests[DATA.tests.length-1];
+  view(`<div class="shead"><button class="x" data-act="home" aria-label="もどる">✕</button><h2 class="pg" style="margin:0">${QUESTIONS.length}問テスト</h2></div>
+  <div class="prompt"><p>${QUESTIONS.length}問を<b>ランダムな順番</b>で書きます。順番はテストのたびに変わるので、順番では覚えられないよ。答えは最後まで出ません。時間制限はないので、落ち着いて書こう。</p>
+  ${last?`<p class="note2" style="margin-top:6px">前回：${last.score}点（${fmt(last.at)}）</p>`:''}</div>
+  <label class="switch"><span><b>本番モード</b><small>ヒント・進み具合・アニメーションをすべて消します</small></span><input type="checkbox" id="hb"></label>
+  <button class="btn red" data-act="go">テストをはじめる</button>`);
+  bind({go:()=>{TEST={i:0,strokes:{},order:shuffledOrder(),honban:$('#hb').checked};document.body.classList.toggle('honban',TEST.honban);testQ()}});
+}
+function testQ(){
+  const q=TQ(TEST.i),last=TEST.i===QUESTIONS.length-1;
+  view(`<div class="thead"><button class="x" data-act="tquit" aria-label="テストを中断">✕</button>${TEST.honban?'':`<div class="bar"><i style="width:${Math.round(TEST.i/QUESTIONS.length*100)}%"></i></div>`}<div class="tno">${TEST.i+1}<small style="font-size:14px">問目</small></div></div>
+  <div class="prompt"><p class="sent">${sentenceHTML(q,'blank')}</p></div>
+  <div class="wwrap"><div class="writer" id="w"></div></div>
+  <div class="tools"><button class="tbtn" data-act="undo">↶ 1画もどす</button><button class="tbtn" data-act="clear">書き直す</button></div>
+  <div class="tnav"><button class="btn" data-act="prev" ${TEST.i===0?'disabled':''}>前</button><button class="btn ${last?'red':'primary'}" data-act="next">${last?'書きおわった':'次'}</button></div>
+  ${TEST.honban?'':`<div class="qdots">${TEST.order.map((_,i)=>{const x=TQ(i);return `<button class="qd ${TEST.strokes[x.id]&&TEST.strokes[x.id].some(s=>s.length)?'w':''} ${i===TEST.i?'cur':''}" data-act="jump" data-i="${i}" aria-label="${i+1}問目">${i+1}</button>`}).join('')}</div>`}`);
+  const W=makeWriter($('#w'),chars(q.answer).length);
+  W.setStrokes(TEST.strokes[q.id]);
+  const keep=()=>{TEST.strokes[q.id]=W.getStrokes()};
+  bind({
+    undo:()=>W.undo(),clear:()=>W.clear(),
+    prev:()=>{keep();TEST.i--;testQ()},
+    jump:b=>{keep();TEST.i=+b.dataset.i;testQ()},
+    next:async()=>{
+      keep();
+      if(!last){TEST.i++;return testQ()}
+      const blank=QUESTIONS.filter(x=>!(TEST.strokes[x.id]||[]).some(s=>s.length)).length;
+      if(blank&&!await confirmBox(`まだ書いていない問題が ${blank}問 あります。採点しますか？`,'採点する','もどって書く'))return;
+      testGrade();
+    },
+    tquit:async()=>{if(await confirmBox('テストを中断しますか？（記録されません）','中断する','つづける')){TEST=null;document.body.classList.remove('honban');go('home')}}
+  });
+}
+async function testGrade(){
+  document.body.classList.remove('honban');
+  const items=TEST.order.map(k=>QUESTIONS[k]).map(q=>{const st=TEST.strokes[q.id]||[];const n=chars(q.answer).length;const empty=!st.some(s=>s.length);
+    return{q,st,img:strokesToImage(st,n),res:empty?'wrong':null,chars:null,comment:empty?'空らん':'',by:empty?'auto':null}});
+  const todo=items.filter(x=>!x.res);
+  if(DATA.settings.ai&&!AI_DOWN&&todo.length){
+    view(`<div class="sheet"><div class="spin"></div><p style="font-weight:800">赤ペンで採点中… <span id="gp">0</span> / ${todo.length}</p><p class="note2">AIが「正しい字か」を見ています</p></div>`);
+    let idx=0,done=0,fails=0;
+    const worker=async()=>{while(idx<todo.length){const it=todo[idx++];
+      if(AI_DOWN)continue;
+      try{const r=await aiJudge(it.q,it.img);Object.assign(it,r)}catch(e){fails++;if(fails>=3&&done<3)AI_DOWN=true}
+      done++;const g=$('#gp');if(g)g.textContent=done}};
+    await Promise.all([worker(),worker(),worker(),worker()]);
+  }
+  if(items.some(x=>!x.res))selfGradeList(items);else testResult(items);
+}
+function selfGradeList(items){
+  const pend=items.filter(x=>!x.res);
+  view(`<h2 class="pg">自分で丸つけしよう</h2>
+  <div class="prompt"><p>${AI_DOWN||!DATA.settings.ai?'AI判定が使えないので、':'AIで判定できなかった問題を、'}お手本と見くらべて丸つけしよう。字のきれいさではなく「正しい字か」で決めてね。</p></div>
+  <div class="panel">${pend.map(x=>`<div class="row" data-id="${x.q.id}"><div class="no">${x.q.id}</div><div>
+    <div class="sent small">${sentenceHTML(x.q,'blank')}</div>
+    <div class="imgs"><img src="${x.img}" alt=""><span class="a">${esc(x.q.answer)}</span></div>
+    <div class="jcs">${[['ok','◎'],['close','△'],['wrong','✕']].map(([v,l])=>`<button class="jc ${v}" data-act="sj" data-id="${x.q.id}" data-v="${v}">${l}</button>`).join('')}</div></div></div>`).join('')}</div>
+  <button class="btn red" data-act="fin" id="fin" disabled>点数を見る</button>`);
+  bind({
+    sj:b=>{const it=items.find(x=>x.q.id==b.dataset.id);it.res=b.dataset.v;it.by='self';
+      $$(`.jc[data-id="${b.dataset.id}"]`).forEach(x=>x.classList.toggle('on',x===b));
+      $('#fin').disabled=items.some(x=>!x.res)},
+    fin:()=>testResult(items)
+  });
+}
+function testResult(items){
+  let committed=false;
+  const commit=()=>{
+    if(committed)return;committed=true;
+    items.forEach(x=>record(x.q.id,x.res,{chars:x.chars}));
+    const sc=calc();
+    DATA.tests.push({at:Date.now(),score:sc.score,wrong:sc.ng.map(x=>x.q.id),close:sc.cl.map(x=>x.q.id),honban:!!TEST.honban});
+    DATA.bestConsec=Math.max(DATA.bestConsec||0,consec100());save();
+  };
+  const calc=()=>{const ok=items.filter(x=>x.res==='ok'),cl=items.filter(x=>x.res==='close'),ng=items.filter(x=>x.res==='wrong');
+    return{ok,cl,ng,score:Math.round((ok.length+cl.length)/items.length*100)}};
+  const render=()=>{
+    const s=calc();const rest=100-s.score;
+    const c=consec100()+(s.score===100?1:0);
+    view(`<h2 class="pg">テスト終了！</h2>
+    <div class="sheet">
+      <div class="score">${s.score}<small>点</small></div>
+      <div class="counts"><span class="c-ok">◎ ${s.ok.length}</span><span class="c-close">△ ${s.cl.length}</span><span class="c-ng">✕ ${s.ng.length}</span></div>
+      ${s.ng.length?`<div class="secttl">復習する漢字</div><div class="chips">${s.ng.map(x=>`<span class="chip ng"><b>${x.q.id}</b>${esc(x.q.answer)}</span>`).join('')}</div>`:''}
+      ${s.cl.length?`<div class="secttl">字は合っているけど形に注意</div><div class="chips">${s.cl.map(x=>`<span class="chip close"><b>${x.q.id}</b>${esc(x.q.answer)}</span>`).join('')}</div>`:''}
+      <p class="remain">${s.score===100?(c>=3?'🏅 3回れんぞく100点！ Sランク！':c>=2?'🏆 2回れんぞく100点！ 100点マスター！':'💯 100点！ もう1回100点で「100点マスター」'):`100点まであと${rest}点！`}</p>
+    </div>
+    ${s.ng.length+s.cl.length?`<button class="btn red" data-act="focus">まちがえた漢字を練習</button>`:''}
+    <button class="btn primary" data-act="again">もう一度${QUESTIONS.length}問</button>
+    <button class="btn" data-act="toHome">トップにもどる</button>
+    <div class="panel"><h3>答案を見る</h3><p class="note2">AIの判定がちがうときは、おうちの人や先生が直せます。</p>
+      ${items.map(x=>`<div class="row"><div class="no">${x.q.id}</div><div><div class="imgs"><img src="${x.img}" alt=""><span class="a">${esc(x.q.answer)}</span></div>
+      ${x.comment?`<div class="note2">💬 ${esc(x.comment)}</div>`:''}
+      <div class="jcs">${[['ok','◎'],['close','△'],['wrong','✕']].map(([v,l])=>`<button class="jc ${v} ${x.res===v?'on':''}" data-act="ov" data-id="${x.q.id}" data-v="${v}">${l}</button>`).join('')}</div></div></div>`).join('')}
+    </div>`);
+  };
+  render();
+  bind({
+    ov:b=>{const it=items.find(x=>x.q.id==b.dataset.id);it.res=b.dataset.v;it.by='fix';const y=window.scrollY;render();window.scrollTo(0,y)},
+    focus:()=>{commit();const s=calc();TEST=null;startSession('focus',[...s.ng,...s.cl].map(x=>x.q.id))},
+    again:()=>{commit();TEST=null;testStart()},
+    toHome:()=>{commit();TEST=null;go('home')}
+  });
+}
+
+/* ================= 一覧 ================= */
+function listView(){
+  const em=['🌱','🌱','🌿','🌳','🏆'];
+  view(`<div class="shead"><button class="x" data-act="home" aria-label="もどる">✕</button><h2 class="pg" style="margin:0">一覧から学ぶ</h2></div>
+  <p class="note2" style="margin-top:6px">問題をえらぶと「おぼえる → なぞる → 見て書く → 思い出す」の順に練習できます。</p>
+  <div class="qgrid">${QUESTIONS.map(q=>`<button class="qt" data-act="open" data-id="${q.id}"><div class="n"><span>${q.id}番</span><span>${em[stage(q.id)]}</span></div><div class="r">${esc(q.reading)}</div></button>`).join('')}</div>`);
+  bind({open:b=>go('study',{id:+b.dataset.id||b.dataset.id,mode:'learn'})});
+}
+function studyView({id,mode}){
+  STUDY_ID=id;
+  const order=MODES.map(m=>m[0]);
+  const ctx={study:true,id,mode,onDone:()=>{const k=order.indexOf(mode);if(k<3)go('study',{id,mode:order[k+1]});else COMMON.nextq()}};
+  ({learn:learnView,trace:traceView,see:seeView,recall:recallView})[mode](id,ctx);
+}
+
+/* ================= 学習記録（保護者・先生） ================= */
+let SHOW_ANS=false;
+function recordsView(){
+  const st=stageCounts();
+  const all=Object.values(DATA.q);const att=all.reduce((a,s)=>a+s.att,0),ok=all.reduce((a,s)=>a+s.ok,0);
+  const weak=weakIds().slice(0,8);
+  const days=Object.keys(DATA.days).length;
+  const em=['未','🌱','🌿','🌳','🏆'];
+  const kList=Object.keys(KUSES);
+  const kCls=k=>{const d=DATA.k[k];if(!d||!(d.ok+d.ng))return '';const a=d.ok/(d.ok+d.ng);return a>=0.9&&d.ok>=2?'hi':a>=0.6?'mid':'lo'};
+  // 使い分け：同じ漢字でも、ある問題は書けて別の問題は書けない
+  const mix=k=>{const u=KUSES[k];if(u.length<2)return false;const ss=u.map(stage);return ss.some(s=>s>=3)&&ss.some(s=>s===1)};
+  view(`<div class="shead"><button class="x" data-act="home" aria-label="もどる">✕</button><h2 class="pg" style="margin:0">学習記録</h2></div>
+  ${badgeText()?`<div class="badge">${badgeText()}</div>`:''}
+  <div class="panel"><h3>学習状況（${QUESTIONS.length}問中）</h3>
+    <div class="stats"><div><b>${st[4]}</b><span>🏆マスター</span></div><div><b>${st[3]}</b><span>🌳かなり</span></div><div><b>${st[2]}</b><span>🌿もう少し</span></div><div><b>${st[0]+st[1]}</b><span>🌱練習中</span></div></div>
+    <div style="margin-top:10px">
+      <div class="kv"><span>見ないで書いた正答率</span><b>${att?Math.round(ok/att*100)+'%':'—'}</b></div>
+      <div class="kv"><span>まだ一度も練習していない</span><b>${st[0]}問</b></div>
+      <div class="kv"><span>練習した日数／書いた回数</span><b>${days}日／${Object.values(DATA.days).reduce((a,b)=>a+b,0)}回</b></div>
+    </div>
+    <p class="note2" style="margin-top:6px">マスター＝見ないで3回れんぞく正解。ヒントを使った正解は数えません。</p>
+  </div>
+  <div class="panel tests"><h3>テストの記録</h3>
+    ${DATA.tests.length?DATA.tests.slice(-10).reverse().map(t=>`<div class="t"><span>${fmt(t.at)}</span><div class="tb"><i style="width:${t.score}%"></i></div><b>${t.score}点${t.honban?'＊':''}</b></div>`).join('')+'<p class="note2">＊本番モード</p>':'<p class="note2">まだテストをしていません</p>'}
+  </div>
+  <div class="panel"><h3>最近の弱点</h3>${weak.length?`<div class="chips" style="justify-content:flex-start">${weak.map(id=>`<span class="chip ng"><b>${id}</b>${esc(Q(id).answer)}</span>`).join('')}</div>`:'<p class="note2">今のところありません</p>'}</div>
+  <div class="panel"><h3>漢字ごとの習熟度</h3>
+    <p class="note2">緑＝書ける／黄＝あと少し／赤＝苦手。点線のわく＝同じ漢字でも問題によって書けたり書けなかったりする（使い分けが苦手）</p>
+    <div class="kgrid" style="margin-top:8px">${kList.map(k=>{const d=DATA.k[k];return `<div class="kg ${kCls(k)} ${mix(k)?'mix':''}"><div class="c">${esc(k)}</div><div class="u">${d?`○${d.ok} ✕${d.ng}`:'—'}</div><div class="u">${KUSES[k].join('・')}番</div></div>`}).join('')}</div>
+  </div>
+  <div class="panel"><h3>問題ごとの記録</h3>
+    <label class="switch" style="margin:0 0 8px"><span>答えを表示</span><input type="checkbox" id="sa" ${SHOW_ANS?'checked':''}></label>
+    <table class="tbl"><tr><th>番</th><th>読み</th>${SHOW_ANS?'<th>答え</th>':''}<th>状態</th><th>○/✕</th><th>最後</th></tr>
+    ${QUESTIONS.map(q=>{const s=DATA.q[q.id];return `<tr><td>${q.id}</td><td>${esc(q.reading)}</td>${SHOW_ANS?`<td class="k">${esc(q.answer)}</td>`:''}<td>${em[stage(q.id)]}</td><td>${s?`${s.ok}/${s.ng}${s.hint?` (ヒ${s.hint})`:''}`:'—'}</td><td>${s?fmt(s.last):'—'}</td></tr>`}).join('')}
+    </table></div>
+  <div class="panel"><h3>設定</h3>
+    <label class="switch" style="margin-top:0"><span><b>AIで自動判定</b><small>オフにすると、お手本と見くらべて自分で丸つけします</small></span><input type="checkbox" id="ai" ${DATA.settings.ai?'checked':''}></label>
+    ${AI_DOWN?'<button class="btn" data-act="airetry">AI判定をもう一度ためす</button>':''}
+    <button class="btn" data-act="exp">学習データを書き出す</button>
+    <button class="btn" data-act="imp">学習データを読みこむ</button>
+    <button class="btn" data-act="qset">問題データを差しかえる</button>
+    <button class="btn" data-act="reset" style="color:#a8201b">学習データを消す</button>
+    <p class="note2" style="margin-top:8px">問題セット：${esc(QSET.title)}（${esc(QSET.setId)}）</p>
+  </div>`);
+  $('#sa').onchange=e=>{SHOW_ANS=e.target.checked;const y=window.scrollY;recordsView();window.scrollTo(0,y)};
+  $('#ai').onchange=e=>{DATA.settings.ai=e.target.checked;if(e.target.checked)AI_DOWN=false;save()};
+  bind({
+    airetry:()=>{AI_DOWN=false;toast('次の判定でAIをためします');recordsView()},
+    exp:()=>{
+      const json=JSON.stringify({setId:QSET.setId,exportedAt:new Date().toISOString(),data:DATA});
+      try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=`kanji100-${today()}.json`;a.click()}catch(e){}
+      modal(`<h3>学習データ</h3><p class="msub">ダウンロードできないときは、下の文字を全部コピーして保存してください。</p><textarea readonly>${esc(json)}</textarea>`,[{label:'とじる',value:true}]);
+    },
+    imp:()=>{
+      modal(`<h3>学習データを読みこむ</h3><p class="msub">書き出したデータをはりつけるか、ファイルをえらんでください。今のデータは上書きされます。</p><input type="file" accept=".json,application/json" id="impf" style="margin:8px 0"><textarea id="impt" placeholder="ここにはりつけ"></textarea>`,
+        [{label:'読みこむ',cls:'primary',value:m=>{const t=m.querySelector('#impt').value.trim();if(!t){toast('データをはりつけてください');return false}
+          try{const o=JSON.parse(t);const d=o.data||o;if(!d.q)throw 0;DATA={...defaultData(),...d};save();toast('読みこみました');recordsView();return true}catch(e){toast('データの形がちがいます');return false}}},
+         {label:'やめる',value:true}]);
+      const f=$('#impf');if(f)f.onchange=async e=>{const file=e.target.files[0];if(file)$('#impt').value=await file.text()};
+    },
+    qset:()=>{
+      const tmpl=JSON.stringify({setId:QSET.setId,title:QSET.title,questions:QSET.questions,kanjiInfo:QSET.kanjiInfo},null,1);
+      modal(`<h3>問題データを差しかえる</h3><p class="msub">テストが変わったら、ここに新しい問題データ(JSON)をはりつけます。sentence の {よみ} が出題部分です。setId を変えると、学習記録は別に保存されます。</p><textarea id="qs">${esc(tmpl)}</textarea>`,
+        [{label:'この問題データを使う',cls:'primary',value:m=>{try{const o=JSON.parse(m.querySelector('#qs').value);const err=validateSet(o);if(err){toast(err,3500);return false}applySet(o,true);return true}catch(e){toast('JSONの形がちがいます');return false}}},
+         {label:'最初の問題データにもどす',value:()=>{applySet(DEFAULT_SET,false);return true}},{label:'やめる',value:true}]);
+    },
+    reset:async()=>{if(await confirmBox('この問題セットの学習データをすべて消しますか？','消す','やめる')){DATA=defaultData();save();toast('消しました');recordsView()}}
+  });
+}
+async function applySet(o,custom){
+  setQSet(o);
+  if(custom)await Store.set(QKEY,o);else await Store.del(QKEY);
+  DATA=(await Store.get(dkey()))||defaultData();
+  DATA.settings=DATA.settings||{ai:true};
+  toast('問題データを切りかえました');go('home');
+}
+
+/* ================= トップ ================= */
+function homeView(){
+  const st=stageCounts();const N=QUESTIONS.length;
+  const done=st[3]+st[4];const pct=Math.round(done/N*100);
+  const weak=weakIds().length;const td=DATA.days[today()]||0;const bt=badgeText();
+  const last=DATA.tests[DATA.tests.length-1];
+  view(`<header class="cover"><div class="cover-sub">${esc(QSET.title)}</div><h1>漢字100点マスター</h1>
+    <div class="namebox">テストまでに <b>100点</b>！${last?`　前回 ${last.score}点`:''}</div></header>
+  ${bt?`<div class="badge">${bt}</div>`:''}
+  <button class="today" data-act="today"><div class="t1">今日の練習</div><div class="t2">${td?`今日は ${td}回 書いたよ`:'苦手な字から自動でえらぶよ'}</div><div class="num">${Math.min(10,N)}<small>問</small></div></button>
+  <div class="menu">
+    <button class="mbtn" data-act="weak"><b>苦手漢字を練習</b><span>${weak?weak+'問 あるよ':'今はないよ'}</span></button>
+    <button class="mbtn test" data-act="test"><b>${N}問テスト</b><span>毎回ちがう順番</span></button>
+    <button class="mbtn" data-act="list"><b>一覧から学ぶ</b><span>おぼえる・なぞる</span></button>
+    <button class="mbtn" data-act="rec"><b>学習記録</b><span>おうちの人・先生用</span></button>
+  </div>
+  <section class="prog"><div class="prog-h"><span>見ないで書ける字</span><b>${done}<small> / ${N}　${pct}%</small></b></div>
+    <div class="bar" style="margin-top:8px;height:12px"><i style="width:${pct}%"></i></div>
+    <div class="masu50">${QUESTIONS.map(q=>`<span class="m s${stage(q.id)}">${q.id}</span>`).join('')}</div>
+    <div class="legend"><span>🌱 まだ練習中 <b>${st[0]+st[1]}</b></span><span>🌿 もう少し <b>${st[2]}</b></span><span>🌳 かなりできる <b>${st[3]}</b></span><span>🏆 マスター <b>${st[4]}</b></span></div>
+  </section>`);
+  bind({today:()=>startSession('today',pickToday(10)),weak:()=>startSession('weak',weakIds().slice(0,10)),test:()=>go('testStart'),list:()=>go('list'),rec:()=>go('records')});
+}
+
+/* ================= ルーター ================= */
+const SCREENS={home:homeView,list:listView,study:studyView,testStart,records:recordsView,sessionResult};
+function go(name,arg){document.body.classList.remove('honban');SCREENS[name](arg)}
+
+/* ================= PWA（ホーム画面に追加） ================= */
+try{
+  const icon='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#3f6b4f"/><rect x="96" y="96" width="320" height="320" fill="#fff"/><path d="M256 96v320M96 256h320" stroke="#dbe7d3" stroke-width="8" stroke-dasharray="20 16"/><circle cx="256" cy="256" r="120" fill="none" stroke="#e0312b" stroke-width="26"/><circle cx="256" cy="256" r="70" fill="none" stroke="#e0312b" stroke-width="22"/></svg>');
+  const man={name:'漢字100点マスター',short_name:'漢字100点',start_url:location.href.split('#')[0],display:'standalone',background_color:'#f6f9f3',theme_color:'#3f6b4f',icons:[{src:icon,sizes:'512x512',type:'image/svg+xml',purpose:'any'}]};
+  const l=document.createElement('link');l.rel='manifest';l.href='data:application/manifest+json,'+encodeURIComponent(JSON.stringify(man));document.head.appendChild(l);
+  const a=document.createElement('link');a.rel='apple-touch-icon';a.href=icon;document.head.appendChild(a);
+}catch(e){}
+
+/* ================= 起動 ================= */
+(async function init(){
+  DEFAULT_SET=JSON.parse($('#question-data').textContent);
+  Object.keys(DEFAULT_SET.kanjiInfo).forEach(k=>{if(!DEFAULT_SET.kanjiInfo[k])delete DEFAULT_SET.kanjiInfo[k]});
+  const custom=await Store.get(QKEY);
+  setQSet(custom&&!validateSet(custom)?custom:DEFAULT_SET);
+  DATA=(await Store.get(dkey()))||defaultData();
+  DATA.settings=DATA.settings||{ai:true};
+  go('home');
+})();
+})();
+</script>
+</body>
+</html>
